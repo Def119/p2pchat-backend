@@ -1,16 +1,4 @@
 [package]
-org = "user"
+org = "user"  
 name = "p2pchat_backend"
 version = "0.1.0"
-distribution = "2201.12.7"
-
-[build-options]
-observabilityIncluded = true
-
-[[dependency]]
-org = "ballerinax"
-name = "mongodb"
-version = "5.2.0"
-
-[tool.bal]
-central.allowInsecure = false
