@@ -9,7 +9,8 @@ COPY . .
 ENV BAL_CONFIG_DEP_UPDATER_ENABLED=false
 
 # Build the project (no need for chmod, this avoids permission issues)
-RUN bal build
+RUN bal build --offline --sticky
+
 
 # ------------ Runtime Stage ------------
 FROM ballerina/ballerina:2201.12.9
