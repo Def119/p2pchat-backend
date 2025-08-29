@@ -1,18 +1,27 @@
-# Use Ballerina image (has bal CLI) as runtime too
-FROM ballerina/ballerina:2201.12.9
+# ------------ Build Stage ------------
+FROM ballerina/ballerina:2201.12.9 AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy your project files into the container
+# Copy project files
 COPY . .
 
-# Optional: Ensure write permissions (in case bal needs to write deps)
+# Allow writing to target/ if needed
 RUN chmod -R u+w /app || true
 
-# Expose any relevant ports (adjust these as per your app)
-EXPOSE 9092
-EXPOSE 9093
+# Build the project (compiles main.bal and dependencies)
+RUN bal build
 
-# Run the Ballerina source code
-CMD ["bal", "run"]
+# ------------ Runtime Stage ------------
+FROM ballerina/ballerina:2201.12.9
+
+WORKDIR /app
+
+# Copy only the compiled jar
+COPY --from=builder /app/target/bin/*.jar /app/app.jar
+
+# Expose your HTTP/WebSocket port (only one for Railway)
+EXPOSE 9092 9093
+
+# Run the compiled Ballerina app
+CMD ["bal", "run", "/app/app.jar"]
