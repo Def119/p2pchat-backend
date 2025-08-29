@@ -1,24 +1,18 @@
-# FROM ballerina/ballerina:latest
-# WORKDIR /app
-# COPY . .
-# RUN bal pack
-# CMD ["bal", "run", "<your_service>"]
+# Use Ballerina image (has bal CLI) as runtime too
+FROM ballerina/ballerina:2201.12.9
 
-# Use official Ballerina image
-FROM ballerina/ballerina:latest
-
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy your Ballerina project
+# Copy your project files into the container
 COPY . .
 
-# Build the Ballerina package
-RUN bal build
+# Optional: Ensure write permissions (in case bal needs to write deps)
+RUN chmod -R u+w /app || true
 
-# Railway provides PORT via env variable, so use that at runtime
-# We will pass it into the Ballerina app using environment variable substitution
-EXPOSE 9092 9093
+# Expose any relevant ports (adjust these as per your app)
+EXPOSE 9092
+EXPOSE 9093
 
-# Run the built Ballerina binary
-CMD ["bal", "run", "main.bal"]
+# Run the Ballerina source code
+CMD ["bal", "run"]
