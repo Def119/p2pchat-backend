@@ -5,13 +5,10 @@ WORKDIR /app
 
 COPY . .
 
-# Allow write permission just in case
-RUN chmod -R u+w /app || true
-
-# Prevent writing to Dependencies.toml
+# Disable auto-updating Dependencies.toml (needed for Railway)
 ENV BAL_CONFIG_DEP_UPDATER_ENABLED=false
 
-# Build project (will NOT write to Dependencies.toml now)
+# Build the project (no need for chmod, this avoids permission issues)
 RUN bal build
 
 # ------------ Runtime Stage ------------
@@ -19,8 +16,12 @@ FROM ballerina/ballerina:2201.12.9
 
 WORKDIR /app
 
+# Copy the built .jar file only
 COPY --from=builder /app/target/bin/*.jar /app/app.jar
 
-EXPOSE 9092 9093
+# Expose only the HTTP/WebSocket ports
+EXPOSE 9092
+EXPOSE 9093
 
+# Run the compiled jar
 CMD ["bal", "run", "/app/app.jar"]
