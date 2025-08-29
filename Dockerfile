@@ -1,18 +1,21 @@
-# Use Ballerina image (has bal CLI) as runtime too
 FROM ballerina/ballerina:2201.12.9
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy your project files into the container
+# Copy your Ballerina project
 COPY . .
 
-# Optional: Ensure write permissions (in case bal needs to write deps)
-RUN chmod -R u+w /app || true
+# Temporarily switch to root to fix permissions
+USER root
+RUN chmod -R u+w /app
 
-# Expose any relevant ports (adjust these as per your app)
+# Switch back to default (non-root) user
+USER ballerina
+
+# Expose ports your app uses
 EXPOSE 9092
 EXPOSE 9093
 
-# Run the Ballerina source code
+# Run the Ballerina source
 CMD ["bal", "run"]
