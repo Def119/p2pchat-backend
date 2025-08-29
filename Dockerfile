@@ -9,4 +9,4 @@ EXPOSE 9092
 EXPOSE 9093
 
 # Run the Ballerina package directly
-CMD ["bal", "run", "--offline", "--sticky", "."]
+CMD ["bal", "run"]
